@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Loop Text Ticker</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        #controls {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+        
+        #controls h3 {
+            margin-top: 0;
+        }
+
+        #controls label, #controls input {
+            display: block;
+            width: calc(100% - 10px);
+            margin-bottom: 10px;
+        }
+
+        #controls input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        #controls button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #controls button:hover {
+            background-color: #0056b3;
+        }
+
+        #ticker-container {
+            overflow: hidden;
+            white-space: nowrap;
+            position: absolute;
+            background-color: #fff;
+            border: 2px solid #000;
+            box-sizing: border-box;
+        }
+
+        #ticker-content {
+            display: inline-block;
+            /* Animation will be applied by JS */
+            white-space: nowrap;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            animation-play-state: running;
+        }
+
+        .ticker-text {
+            display: inline-block;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        @keyframes ticker-animation {
+            to {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Custom Loop Text Ticker</h2>
+
+    <div id="controls">
+        <h3>Text Options</h3>
+        <label for="text-input">Text:</label>
+        <input type="text" id="text-input" value="Glitch Gamers LIVE! 🎮 Join Glitch Beast & Glitch Hunter for epic battle royale action! 🔥It's Glitch Gamers time! ⏰ Drop a like 👍, share with friends, and hit that subscribe button! ✨">
+        
+        <label for="font-size">Font Size (px):</label>
+        <input type="number" id="font-size" value="30">
+        
+        <label for="text-color">Text Color:</label>
+        <input type="color" id="text-color" value="#ff0000">
+
+        <h3>Ticker Container Options</h3>
+        <label for="ticker-x">X Position (px):</label>
+        <input type="number" id="ticker-x" value="0">
+        
+        <label for="ticker-y">Y Position (px):</label>
+        <input type="number" id="ticker-y" value="0">
+        
+        <label for="ticker-width">Width (px):</label>
+        <input type="number" id="ticker-width" value="1920">
+        
+        <label for="ticker-height">Height (px):</label>
+        <input type="number" id="ticker-height" value="50">
+
+        <label for="bg-color">Background Color:</label>
+        <input type="color" id="bg-color" value="#000000">
+
+        <label for="border-color">Border Color:</label>
+        <input type="color" id="border-color" value="#000000">
+
+        <label for="scroll-speed">Scroll Speed:</label>
+        <input type="range" id="scroll-speed" min="1" max="300" value="300">
+        <span id="scroll-speed-value">300s</span>
+
+        <button onclick="updateTicker()">Update Ticker</button>
+    </div>
+
+    <div id="ticker-container">
+        <div id="ticker-content">
+            <span class="ticker-text">Your custom text here!</span>
+        </div>
+    </div>
+
+    <script>
+        function updateTicker() {
+            const textInput = document.getElementById('text-input').value;
+            const fontSize = document.getElementById('font-size').value;
+            const textColor = document.getElementById('text-color').value;
+            const tickerX = document.getElementById('ticker-x').value;
+            const tickerY = document.getElementById('ticker-y').value;
+            const tickerWidth = document.getElementById('ticker-width').value;
+            const tickerHeight = document.getElementById('ticker-height').value;
+            const bgColor = document.getElementById('bg-color').value;
+            const borderColor = document.getElementById('border-color').value;
+            const scrollDuration = document.getElementById('scroll-speed').value;
+            document.getElementById('scroll-speed-value').textContent = `${scrollDuration}s`;
+
+            const tickerContainer = document.getElementById('ticker-container');
+            const tickerContent = document.getElementById('ticker-content');
+            const tickerText = document.querySelector('.ticker-text');
+
+            // Update ticker container styles
+            tickerContainer.style.left = `${tickerX}px`;
+            tickerContainer.style.top = `${tickerY}px`;
+            tickerContainer.style.width = `${tickerWidth}px`;
+            tickerContainer.style.height = `${tickerHeight}px`;
+            tickerContainer.style.backgroundColor = bgColor;
+            tickerContainer.style.borderColor = borderColor;
+
+            // Repeat the text multiple times to ensure a continuous loop
+            let repeatedText = '';
+            let loopText = textInput;
+            if (!textInput.endsWith(' ')) {
+                loopText += ' ';
+            }
+            for (let i = 0; i < 20; i++) {
+                repeatedText += loopText;
+            }
+            
+            // Update ticker text content and styles
+            tickerText.textContent = repeatedText;
+            tickerText.style.fontSize = `${fontSize}px`;
+            tickerText.style.color = textColor;
+            tickerText.style.lineHeight = `${tickerHeight}px`; // Vertically center text
+            
+            // To ensure the animation starts immediately, we remove and re-add it.
+            tickerContent.style.animation = 'none';
+            tickerContent.offsetWidth; // Trigger a reflow
+            tickerContent.style.animation = `ticker-animation ${scrollDuration}s linear infinite`;
+        }
+
+        // Add an event listener to update the display value as the slider moves
+        document.getElementById('scroll-speed').addEventListener('input', function() {
+            document.getElementById('scroll-speed-value').textContent = `${this.value}s`;
+        });
+
+        // Start the ticker immediately by calling the function
+        updateTicker();
+    </script>
+
+</body>
+</html>
